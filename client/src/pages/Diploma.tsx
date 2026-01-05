@@ -26,49 +26,6 @@ export default function Diploma() {
     window.print();
   };
 
-  const handleSendEmail = async () => {
-    if (!name) {
-      alert("Vennligst skriv inn navnet ditt først!");
-      return;
-    }
-
-    try {
-      const levelResults: Record<number, { name: string; accuracy: number; time: number }> = {};
-      
-      LEVELS.forEach(level => {
-        const p = progress[level.id];
-        if (p) {
-          levelResults[level.id] = {
-            name: level.name,
-            accuracy: p.accuracy,
-            time: p.avgTime,
-          };
-        }
-      });
-
-      const response = await fetch("/api/diplomas", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          studentName: name,
-          totalStars,
-          avgAccuracy,
-          levelResults: JSON.stringify(levelResults),
-        }),
-      });
-
-      if (response.ok) {
-        alert(`✅ Diplom sendt! Kjempebra, ${name}! Lærer har fått resultatet ditt.`);
-        setName("");
-      } else {
-        alert("❌ Noe gikk galt ved sending. Prøv igjen.");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("❌ Feil ved sending av diplom");
-    }
-  };
-
   React.useEffect(() => {
     // Celebration confetti on mount
     const duration = 3000;
@@ -111,7 +68,7 @@ export default function Diploma() {
       <div className="w-full max-w-4xl space-y-8 print:space-y-0">
         {/* Input Section - Hidden on Print */}
         <Card className="p-6 print:hidden">
-          <label className="block text-sm font-medium mb-2">Skriv inn elevens navn:</label>
+          <label className="block text-sm font-medium mb-2">Skriv inn navnet ditt:</label>
           <div className="flex gap-4">
             <Input 
               value={name} 
@@ -119,13 +76,11 @@ export default function Diploma() {
               placeholder="Skriv navnet ditt her..."
               className="text-lg"
             />
-            <Button onClick={handleSendEmail} className="gap-2 bg-green-600 hover:bg-green-700">
-              <Send className="w-4 h-4" /> Send til Lærer
-            </Button>
             <Button onClick={handlePrint} variant="outline" className="gap-2">
-              <Printer className="w-4 h-4" /> Skriv ut
+              <Printer className="w-4 h-4" /> Skriv ut / Ta skjermbilde
             </Button>
           </div>
+          <p className="text-sm text-slate-500 mt-2">💡 Tips: Trykk "Skriv ut" eller ta et skjermbilde av diplomet ditt!</p>
         </Card>
 
         {/* The Diploma Certificate */}
